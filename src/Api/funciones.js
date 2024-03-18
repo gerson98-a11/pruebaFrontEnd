@@ -47,30 +47,33 @@ export const todoApi = {
 
   // Método para eliminar un elemento por su ID
   deleteItem: function (itemId) {
-    const urlWithId = `${this.url}/${itemId}`; // Construye la URL con el ID del elemento
-    // Realiza una solicitud DELETE para eliminar el elemento específico por su ID
+    const urlWithId = `${this.url}/${itemId}`;
     return fetch(urlWithId, {
       method: "DELETE",
       headers: {
-        "x-api-key": this.apiKey, // Incluye la clave de API en los encabezados
+        "x-api-key": this.apiKey,
       },
     })
       .then((response) => {
-        // Maneja la respuesta de la solicitud
         if (!response.ok) {
-          throw new Error("Error al eliminar el elemento"); // Lanza un error si la solicitud no fue exitosa
+          throw new Error("Error al eliminar el elemento");
         }
-        return response.json(); // Retorna los datos obtenidos en formato JSON
+        // En lugar de response.json(), simplemente retornamos la respuesta
+        return response;
+      })
+      .then((data) => {
+        console.log("Elemento eliminado correctamente:", data);
       })
       .catch((error) => {
-        console.error("Error al eliminar el elemento:", error); // Maneja errores si ocurrieron durante la solicitud
+        console.error("Error al eliminar el elemento:", error);
       });
   },
 
   // Método para actualizar un elemento por su ID
   updateItem: function (itemId, name, description, status, dueDate) {
     const urlWithId = `${this.url}/${itemId}`; // Construye la URL con el ID del elemento
-    const itemData = { // Construye el objeto de datos del elemento a actualizar
+    const itemData = {
+      // Construye el objeto de datos del elemento a actualizar
       id: itemId,
       name: name,
       description: description,
@@ -101,7 +104,8 @@ export const todoApi = {
   // Método para agregar un nuevo elemento
   postItem: function (name, description, status, dueDate) {
     const urlWithId = `${this.url}`; // Construye la URL para agregar un nuevo elemento
-    const itemData = { // Construye el objeto de datos del nuevo elemento
+    const itemData = {
+      // Construye el objeto de datos del nuevo elemento
       name: name,
       description: description,
       status: status,
