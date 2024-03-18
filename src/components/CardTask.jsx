@@ -58,7 +58,7 @@ const CardTask = () => {
                 setLoading(false); // Marcar que los datos han sido cargados
             })
             .catch(error => console.error('Error al obtener los datos:', error));
-    }, []);
+    }, [items]);
 
     return (
         <>
@@ -103,7 +103,6 @@ const CardTask = () => {
                                     key={item.id}
                                     ellipsis={{
                                         expandable: true,
-                                        suffix: '--Description Task',
                                         onEllipsis: (ellipsis) => {
                                             console.log('Ellipsis changed:', ellipsis);
                                         },
