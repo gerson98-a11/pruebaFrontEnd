@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Radio, DatePicker, Skeleton, Alert, Flex  } from "antd";
-import { todoApiPost, todoApi } from "../Api/funciones";
+import { Button, Form, Input, Radio, DatePicker, Skeleton, Alert, Flex, notification, Space } from "antd";
+import { todoApi } from "../Api/funciones";
 import dayjs from 'dayjs';
+import ModalTask from "./ModalTask";
 const { TextArea } = Input;
 
 
-const FormTask = ({ itemId }) => {
+const FormTask = ({ itemId, handleCloseModal }) => {
     const [form] = Form.useForm();
     const [initialFormValues, setInitialFormValues] = useState({}); // Estado para manejar los valores iniciales del formulario
     const [loading, setLoading] = useState(false); // Estado para manejar el loading hasta que acrguen los datos 
     const [error, setError] = useState(null); // Estado para manejar el mensaje de error
+    const [api, contextHolder] = notification.useNotification();
+
+
+
+
     useEffect(() => {
         if (!itemId) {
             form.resetFields(); // Esto limpiará todos los campos del formulario
         }
     }, [itemId]);
+
     useEffect(() => {
         if (itemId) {
             setLoading(true); // Marcar que se están cargando los datos
@@ -52,8 +59,14 @@ const FormTask = ({ itemId }) => {
             // Ejecutar la función de actualización del API con los valores del formulario
             todoApi.updateItem(itemId, values.name, values.description, values.status, values.dueDate.format("YYYY-MM-DD"))
                 .then(data => {
+                    notification.success({
+                        message: 'Success',
+                        description: 'Item updated successfully',
+                    });
+                    handleCloseModal()
+                    form.resetFields();
                     // Si la actualización es exitosa, imprimir un mensaje en la consola
-                    console.log('Ítem actualizado exitosamente:', data);
+                    console.log('Task actualizado exitosamente:', data);
                 })
                 .catch(error => {
                     // Si ocurre un error durante la actualización, imprimir un mensaje de error en la consola
@@ -62,8 +75,14 @@ const FormTask = ({ itemId }) => {
         } else {
             // Si no hay un ID, significa que se está creando un nuevo elemento
             // Ejecutar la función de agregar ítem del API con los valores del formulario
-            todoApiPost.addItem(values.name, values.description, values.status, values.dueDate.format("YYYY-MM-DD"))
+            todoApi.postItem(values.name, values.description, values.status, values.dueDate.format("YYYY-MM-DD"))
                 .then(data => {
+                    handleCloseModal()
+                    form.resetFields();
+                    notification.success({
+                        message: 'Success',
+                        description: 'Task entered successfull',
+                    }); 
                     // Si la creación es exitosa, imprimir un mensaje en la consola
                     console.log('Ítem agregado exitosamente:', data);
                 })
@@ -83,6 +102,7 @@ const FormTask = ({ itemId }) => {
 
     return (
         <div>
+            {contextHolder}
             {error && <Alert message={error} type="error" />} {/* Mostrar Alert si hay un error */}
             <br />
             <Form
@@ -162,9 +182,10 @@ const FormTask = ({ itemId }) => {
                         span: 16,
                     }}
                 >
-                     <Button htmlType="submit" type="primary" >{itemId ? 'Update Task' : 'Save Task'}</Button> 
-            </Form.Item>
-        </Form>
+                    <Button htmlType="submit" type="primary" >{itemId ? 'Update Task' : 'Save Task'}</Button>
+                </Form.Item>
+            </Form>
+
         </div >
     );
 };

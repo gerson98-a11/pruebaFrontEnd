@@ -62,61 +62,72 @@ const CardTask = () => {
 
     return (
         <>
-            {isModalOpen && (
-                <ModalTask
-                    title="Update the task"
-                    isModalOpen={isModalOpen}
-                    onOk={handleOk}
-                    onCancel={handleCancel}
-                    itemId={selectedItemId}
-                />
-            )}
-            {loading ? (
-                <Spin size="large" />
-            ) : (
-                items.map(item => (
-                    <Flex wrap="wrap" gap="small" key={item.id}>
-                        <Badge.Ribbon key={item.id} text={item.status} color={item.status === 'doing' ? 'red' : undefined}>
-                            <Card
-                                actions={[
-                                    <div key={item.id} onClick={() => handleCardClick(item.id)}><EditOutlined key="edit" /></div>,
-                                    <Popconfirm
-                                    key={item.id} 
-                                    title="Delete the task"
-                                    description="Are you sure to delete this task?"
-                                    onConfirm={() => confirmDelete(item.id)} // Llama a confirmDelete si se confirma la eliminación
-                                    onCancel={cancel} // Llama a cancel si se cancela la eliminación
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <div key={item.id} onClick={() => handleCardClickDelete(item.id)}><DeleteOutlined key="delete" /></div>
-                                    </Popconfirm>
-                                ]}
-                                style={{ width: 300, marginBottom: 16 }}
+    {/* Modal para actualizar la tarea */}
+    {isModalOpen && (
+        <ModalTask
+            title="Update the task"
+            isModalOpen={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            itemId={selectedItemId}
+        />
+    )}
+    {/* Spinner de carga */}
+    {loading ? (
+        <Spin size="large" />
+    ) : (
+        // Renderización de los elementos de la lista
+        items.map(item => (
+            <Flex wrap="wrap" gap="small" key={item.id}>
+                {/* Etiqueta de estado de la tarea */}
+                <Badge.Ribbon key={item.id} text={item.status} color={item.status === 'doing' ? 'red' : undefined}>
+                    {/* Tarjeta de la tarea */}
+                    <Card
+                        actions={[
+                            // Icono de editar
+                            <div key={item.id} onClick={() => handleCardClick(item.id)}><EditOutlined key="edit" /></div>,
+                            // Confirmación de eliminación
+                            <Popconfirm
+                                key={item.id} 
+                                title="Delete the task"
+                                description="Are you sure to delete this task?"
+                                onConfirm={() => confirmDelete(item.id)} // Llama a confirmDelete si se confirma la eliminación
+                                onCancel={cancel} // Llama a cancel si se cancela la eliminación
+                                okText="Yes"
+                                cancelText="No"
                             >
-                                <Meta
-                                    avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
-                                    title={item.name}
-                                    description={`Due Date: ${item.dueDate.split('T')[0]}`}
-                                />
-                                <Paragraph
-                                    key={item.id}
-                                    ellipsis={{
-                                        expandable: true,
-                                        onEllipsis: (ellipsis) => {
-                                            console.log('Ellipsis changed:', ellipsis);
-                                        },
-                                    }}
-                                    title={`${item.description}--Tarea`}
-                                >
-                                    {item.description}
-                                </Paragraph>
-                            </Card>
-                        </Badge.Ribbon>
-                    </Flex>
-                ))
-            )}
-        </>
+                                {/* Icono de eliminar */}
+                                <div key={item.id} onClick={() => handleCardClickDelete(item.id)}><DeleteOutlined key="delete" /></div>
+                            </Popconfirm>
+                        ]}
+                        style={{ width: 300, marginBottom: 16 }}
+                    >
+                        {/* Avatar de la tarea */}
+                        <Meta
+                            avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+                            title={item.name}
+                            description={`Due Date: ${item.dueDate.split('T')[0]}`}
+                        />
+                        {/* Descripción de la tarea */}
+                        <Paragraph
+                            key={item.id}
+                            ellipsis={{
+                                expandable: true,
+                                onEllipsis: (ellipsis) => {
+                                    console.log('Ellipsis changed:', ellipsis);
+                                },
+                            }}
+                            title={`${item.description}--Tarea`}
+                        >
+                            {item.description}
+                        </Paragraph>
+                    </Card>
+                </Badge.Ribbon>
+            </Flex>
+        ))
+    )}
+</>
+
     );
 };
 
